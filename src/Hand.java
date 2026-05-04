@@ -1,5 +1,6 @@
 import java.util.*;
 
+@SuppressWarnings("CollectionAddedToSelf")
 public class Hand {
     private final List<Card> hand;
     public static final int STARTING_CARDS = 7;
@@ -10,10 +11,6 @@ public class Hand {
 
     public void add(Card c){
         hand.add(c);
-    }
-
-    public int getSize(){
-        return hand.size(); // We reserve one space for the step in between obtaining one and discarding
     }
 
     public Card getRandom(){
@@ -34,86 +31,125 @@ public class Hand {
         return sb.toString();
     }
 
-    public List<Card> sortHandBySuit(){
-        class Sorting implements Comparator<Card>{
-            public int compare(Card a, Card b){
-                return a.compareTo(b);
-            }
+//    public List<Card> sortHandBySuit(){
+//        class Sorting implements Comparator<Card>{
+//            public int compare(Card a, Card b){
+//                return a.compareTo(b);
+//            }
+//        }
+//        hand.sort(new Sorting());
+//        return hand;
+//    }
+//
+//    public List<Card> sortHandByNumbers(){
+//        class Sorting implements Comparator<Card>{
+//            public int compare(Card a, Card b){
+//                return a.getValue() - b.getValue();
+//            }
+//        }
+//        hand.sort(new Sorting());
+//        return hand;
+//    }
+//
+//    public List<Card> getSortedHandBySuit(){
+//        class Sorting implements Comparator<Card>{
+//            public int compare(Card a, Card b){
+//                return a.compareTo(b);
+//            }
+//        }
+//        return hand.stream().sorted(new Sorting()).toList();
+//    }
+//
+//    public List<Card> getSortedHandByNumbers(){
+//        class Sorting implements Comparator<Card>{
+//            public int compare(Card a, Card b){
+//                return a.getValue() - b.getValue();
+//            }
+//        }
+//        return hand.stream().sorted(new Sorting()).toList();
+//    }
+
+    public List<List<Card>> getSets(){
+        Map<Integer, List<Card>> byValue = new HashMap<>();
+
+        for(Card c : hand){
+            if(!byValue.containsKey(c.getValue())) byValue.put(c.getValue(), new ArrayList<>());
+            byValue.get(c.getValue()).add(c);
         }
-        hand.sort(new Sorting());
-        return hand;
-    }
 
-    public List<Card> sortHandByNumbers(){
-        class Sorting implements Comparator<Card>{
-            public int compare(Card a, Card b){
-                return a.getValue() - b.getValue();
-            }
-        }
-        hand.sort(new Sorting());
-        return hand;
-    }
+        List<List<Card>> sets = new ArrayList<>();
 
-    public List<Card> getSortedHandBySuit(){
-        class Sorting implements Comparator<Card>{
-            public int compare(Card a, Card b){
-                return a.compareTo(b);
-            }
-        }
-        return hand.stream().sorted(new Sorting()).toList();
-    }
-
-    public List<Card> getSortedHandByNumbers(){
-        class Sorting implements Comparator<Card>{
-            public int compare(Card a, Card b){
-                return a.getValue() - b.getValue();
-            }
-        }
-        return hand.stream().sorted(new Sorting()).toList();
-    }
-
-    public boolean checkCanClose(){
-        // Closing in Chinchon is an action that can only be triggered if you have two groups of three cards. Those groups can be either a 3-card straight (same suit) or a same-number trio
-
-        List<Card> suitSort = getSortedHandBySuit();
-        List<Card> numberSort = getSortedHandByNumbers();
-
-        System.out.println(numberSort);
-        // Checking straights
-        int maxStraightFoundLength = 1, straightsFound = 0;
-        int prevNum = numberSort.getFirst().getValue(), prevSuit = numberSort.getFirst().getNumericalSuit();
-        for(int i = 1; i < numberSort.size(); i++){
-            Card current = numberSort.get(i);
-            if(current.getValue() == prevNum + 1 && prevSuit == current.getNumericalSuit()){
-                maxStraightFoundLength += 1;
-
-                // TODO: implement that straights can be of 4 elements as well
-                // TODO: check that after the 7 there is a jump up to 10
-                if(maxStraightFoundLength == 3){
-                    maxStraightFoundLength = 1;
-                    straightsFound += 1;
+        for(List<Card> c : byValue.values()){
+            if(c.size() >= 3){
+                int n = c.size();
+                for(int mask = 0; mask < (1 << n); mask++){
+                    List<Card> subset = new ArrayList<>();
+                    for(int i = 0; i < n; i++){
+                        if((mask & (1 << i)) != 0) subset.add(c.get(i));
+                    }
+                    if(subset.size() >= 3) sets.add(subset);
                 }
             }
-
-            prevNum = current.getValue(); prevSuit = current.getNumericalSuit();
         }
 
-        System.out.println("STRAIGHTS FOUND: " + straightsFound);
+        return sets;
+    }
 
-        return true;
+    public List<List<Card>> getRuns(){
+        Map<Integer, List<Card>> bySuit = new HashMap<>(); // Recall that 0 = bastos; 1 = oros; 2 = espadas and 3 = copas
+
+        for(Card c : hand){
+            if(!bySuit.containsKey(c.getNumericalSuit())) bySuit.put(c.getNumericalSuit(), new ArrayList<>());
+            bySuit.get(c.getNumericalSuit()).add(c);
+        }
+
+        List<List<Card>> sets = new ArrayList<>();
+
+        for(List<Card> c : bySuit.values()){
+            for(int j = 0; j < c.size(); j++){
+                if(c.size() - j >= 3){
+                    int n = c.size();
+                    // We sort the cards with the same suit so that it eases the task of checking for runs
+                    Comparator<Card> sortByNumber = Card::compareTo;
+                    c.sort(sortByNumber);
+
+                    List<Card> subset = new ArrayList<>();
+                    int prevValue = -1;
+                    for(int i = j; i < n; i++){
+                        Card current = c.get(i);
+                        if(prevValue > 0){
+                            if(prevValue == current.getValue() - 1) subset.add(current);
+                            else if(prevValue == current.getValue()){
+                                continue;
+                            }else {
+                                subset.removeAll(subset);
+                                subset.add(current);
+                            }
+                        } else {
+                            subset.add(current);
+                        }
+
+                        prevValue = current.getValue();
+
+//                        System.out.println("executing ahh. size = " + subset.size());
+//                        System.out.println("subset: " + subset);
+                        if(subset.size() >= 3 && !sets.contains(subset)) sets.add(new ArrayList<>(subset));
+                    }
+//                System.out.println(sets);
+                }
+            }
+        }
+//
+        return sets;
     }
 
     public static void main(){
         Hand curr = new Hand();
-        curr.add(new Card("B", 1));
-        curr.add(new Card("B", 2));
-        curr.add(new Card("B", 3));
-        curr.add(new Card("O", 5));
-        curr.add(new Card("O", 4));
+        curr.add(new Card("O", 2));
         curr.add(new Card("O", 3));
-        curr.add(new Card("O", 12));
-
-        curr.checkCanClose();
+        curr.add(new Card("O", 3));
+        curr.add(new Card("O", 4));
+        System.out.println(curr.getRuns());
     }
 
     public boolean containsCard(Card c){
