@@ -1,5 +1,3 @@
-import java.util.InputMismatchException;
-
 public class Card {
     private final String suit;
     private final int value;
@@ -9,7 +7,7 @@ public class Card {
         this.suit = s;
         this.value = v;
 
-        if(!s.equals("B") && !s.equals("O") && !s.equals("E") && !s.equals("C")) throw new InputMismatchException("The suit should be either B, O, E or C");
+        if(!s.equals("B") && !s.equals("O") && !s.equals("E") && !s.equals("C")) throw new IllegalArgumentException("The suit should be either B, O, E or C");
 
         switch (suit) {
             case "B" -> numericalSuit = 0; // Bastos

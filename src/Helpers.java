@@ -1,4 +1,8 @@
 import dataStructures.ListPOI;
+import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.ArrayList;
 
 public class Helpers {
     public static void dealCards(Hand cards, int[] nums, String[] suits, ListPOI<Card> library){
@@ -16,5 +20,14 @@ public class Helpers {
             cards.add(cardToInsert);
             library.remove(cardToInsert);
         }
+    }
+
+    public static <T> List<T> union(List<T> list1, List<T> list2) {
+        Set<T> set = new HashSet<>();
+
+        set.addAll(list1);
+        set.addAll(list2);
+
+        return new ArrayList<>(set);
     }
 }

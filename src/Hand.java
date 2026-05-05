@@ -8,6 +8,7 @@ public class Hand {
     public Hand(){
         hand = new ArrayList<>();
     }
+    public Hand(List<Card> nH){ this.hand = nH; }
 
     public void add(Card c){
         hand.add(c);
@@ -31,43 +32,7 @@ public class Hand {
         return sb.toString();
     }
 
-//    public List<Card> sortHandBySuit(){
-//        class Sorting implements Comparator<Card>{
-//            public int compare(Card a, Card b){
-//                return a.compareTo(b);
-//            }
-//        }
-//        hand.sort(new Sorting());
-//        return hand;
-//    }
-//
-//    public List<Card> sortHandByNumbers(){
-//        class Sorting implements Comparator<Card>{
-//            public int compare(Card a, Card b){
-//                return a.getValue() - b.getValue();
-//            }
-//        }
-//        hand.sort(new Sorting());
-//        return hand;
-//    }
-//
-//    public List<Card> getSortedHandBySuit(){
-//        class Sorting implements Comparator<Card>{
-//            public int compare(Card a, Card b){
-//                return a.compareTo(b);
-//            }
-//        }
-//        return hand.stream().sorted(new Sorting()).toList();
-//    }
-//
-//    public List<Card> getSortedHandByNumbers(){
-//        class Sorting implements Comparator<Card>{
-//            public int compare(Card a, Card b){
-//                return a.getValue() - b.getValue();
-//            }
-//        }
-//        return hand.stream().sorted(new Sorting()).toList();
-//    }
+    public List<Card> getHand(){return hand;}
 
     public List<List<Card>> getSets(){
         Map<Integer, List<Card>> byValue = new HashMap<>();
@@ -118,7 +83,7 @@ public class Hand {
                     for(int i = j; i < n; i++){
                         Card current = c.get(i);
                         if(prevValue > 0){
-                            if(prevValue == current.getValue() - 1) subset.add(current);
+                            if(prevValue == current.getValue() - 1 || (current.getValue() == 10 && prevValue == 7)) subset.add(current);
                             else if(prevValue == current.getValue()){
                                 continue;
                             }else {
@@ -141,15 +106,6 @@ public class Hand {
         }
 //
         return sets;
-    }
-
-    public static void main(){
-        Hand curr = new Hand();
-        curr.add(new Card("O", 2));
-        curr.add(new Card("O", 3));
-        curr.add(new Card("O", 3));
-        curr.add(new Card("O", 4));
-        System.out.println(curr.getRuns());
     }
 
     public boolean containsCard(Card c){

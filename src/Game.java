@@ -107,11 +107,11 @@ public class Game {
         library.remove(topDiscard);
 
         while(true){
-            playerCards.sortHandBySuit();
-            cpuCards.sortHandByNumbers();
+//            playerCards.sortHandBySuit();
+//            cpuCards.sortHandByNumbers();
             playerTurn();
-            playerCards.sortHandBySuit();
-            cpuCards.sortHandByNumbers();
+//            playerCards.sortHandBySuit();
+//            cpuCards.sortHandByNumbers();
             simulateCpu();
         }
     }
