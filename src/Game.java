@@ -76,30 +76,33 @@ public class Game {
     public int getPlayerDebt(){ return playerDebt; }
     public int getCpuDebt(){ return cpuDebt; }
     public boolean getKeepPlaying() {return keepPlaying;}
+    public void setKeepPlaying(boolean b){this.keepPlaying = b;}
 
     public void playerTurn(PrintWriter printer){
         ANSICodes.clearTerminal();
         boolean discard = true;
         String[] lines = {"---------CHINCHON, A TRADITIONAL SPANISH CARD GAME---------\n", "\n", "\n", "\n",
-                "\t Top of discard pile: " + topDiscard + "\n", "\t Your hand: " + playerCards + "\n", "\t CPU's hand: " + cpuCards + "\n",
+                "\t Top of discard pile: " + topDiscard + "\n", "\t Your hand: " + playerCards + "\n",
                 "\t Do you wish to get the discarded card (1), take one from the library (2) or finish the round (3)? \n"};
+        String criticalLine = "\t Your hand: " + playerCards + "\n";
 
         int i = 0;
         for(String line : lines){
             System.out.println(line);
-            if(i != lines.length - 1) {
+            if(i != lines.length - 1 && !line.equals(criticalLine)) {
                 printer.print(line);
                 printer.flush();
             }
             i++;
         }
+        printer.print("\t Your hand: " + cpuCards + "\n");
+        printer.flush();
 
         int action;
 
         try{
             action = sc.nextInt();
         } catch(InputMismatchException e){
-//            System.out.println("Error reading the input. Please try again");
             action = -1;
         }
 
@@ -189,18 +192,21 @@ public class Game {
         if(printer == null) return;
 
         String[] lines = {"---------CHINCHON, A TRADITIONAL SPANISH CARD GAME---------\n", "\n", "\n", "\n",
-                "\t Top of discard pile: " + topDiscard + "\n", "\t Your hand: " + playerCards + "\n", "\t CPU's hand: " + cpuCards + "\n",
+                "\t Top of discard pile: " + topDiscard + "\n", "\t Your hand: " + cpuCards + "\n",
                 "\t Do you wish to get the discarded card (1), take one from the library (2) or finish the round (3)? \n"};
+        String criticalLine = "\t Your hand: " + cpuCards + "\n";
 
         int i = 0;
         for(String line : lines){
-            if(i != lines.length - 1) {
+            if(i != lines.length - 1 && !line.equals(criticalLine)) {
                 System.out.println(line);
             }
             printer.print(line);
             printer.flush();
             i++;
         }
+
+        System.out.print("\t Your hand: " + playerCards + "\n");
 
 //        Card randomCard = library.getRandom();
 
@@ -295,6 +301,10 @@ public class Game {
         cpuCards.remove(c);
     }
 
+    public void getFirstDiscard(){
+        topDiscard = library.getRandom();
+        library.remove();
+    }
 //    public static void main() {
 //        int playerDebt = 0, cpuDebt = 0;
 //        Game game = new Game(true, playerDebt, cpuDebt);
@@ -307,10 +317,10 @@ public class Game {
 //        String anotherRound;
 //        boolean playAnotherRound = true;
 //
-//        System.out.println("--------Test-----");
-//        Server sv = new Server();
-//        System.out.println("Sending message to client...");
-//        sv.sendMessageToClient("Hola! Mensaje desde Game.java");
+////        System.out.println("--------Test-----");
+////        Server sv = new Server();
+////        System.out.println("Sending message to client...");
+////        sv.sendMessageToClient("Hola! Mensaje desde Game.java");
 //
 //        while(playAnotherRound){
 //            playerCards.sortHandBySuit();
