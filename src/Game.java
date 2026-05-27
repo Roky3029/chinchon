@@ -78,6 +78,16 @@ public class Game {
     public boolean getKeepPlaying() {return keepPlaying;}
     public void setKeepPlaying(boolean b){this.keepPlaying = b;}
 
+    private void sendMsg(PrintWriter printer, String msg){
+        printer.print(msg);
+        printer.flush();
+    }
+
+    private void sendMsg(PrintWriter printer, int msg){
+        printer.print(msg);
+        printer.flush();
+    }
+
     public void playerTurn(PrintWriter printer){
         ANSICodes.clearTerminal();
         boolean discard = true;
@@ -201,8 +211,7 @@ public class Game {
             if(i != lines.length - 1 && !line.equals(criticalLine)) {
                 System.out.println(line);
             }
-            printer.print(line);
-            printer.flush();
+            sendMsg(printer, line);
             i++;
         }
 
@@ -214,16 +223,16 @@ public class Game {
 
         try{
             action = scanner.nextInt();
+//            System.out.println("THe remote user has selected " + action);
         } catch(InputMismatchException e){
 //            System.out.println("Error reading the input. Please try again");
             action = -1;
         }
 
-        printer.println(action);
-        printer.flush();
+        sendMsg(printer, action);
 
         while(action < 0 || action > 3){
-            printer.println("Huh? Please input a valid action: ");
+            sendMsg(printer, "Huh? Please input a valid action: \n");
             scanner.nextLine();
             try{
                 action = scanner.nextInt();
@@ -239,18 +248,19 @@ public class Game {
             case 2:
                 Card randomCard = library.getRandom();
                 cpuCards.add(randomCard);
-                printer.println("\t You've obtained the " + randomCard);
+                sendMsg(printer, "\t You've obtained the " + randomCard + "\n");
                 library.remove(randomCard);
                 break;
             case 3:
                 int deadwood = GameLogic.findBestGrouping(cpuCards);
                 if(deadwood > 3){
-                    printer.println("Sorry, you cannot finish the round. Your actual deadwood is " + deadwood);
+                    sendMsg(printer, "Sorry, you cannot finish the round. Your actual deadwood is " + deadwood + "\n");
                     discard = false;
                     break;
                 }
-                printer.print("Are you sure you want to finish the round (1 = yes; 0 = no)? Your current deadwood is " + deadwood);
-                printer.println(deadwood == 0 ? " (-10 point bonus)" : "");
+                sendMsg(printer, "Are you sure you want to finish the round (1 = yes; 0 = no)? Your current deadwood is " + deadwood + "\n");
+                sendMsg(printer, deadwood == 0 ? " (-10 point bonus)\n" : "\n");
+
                 int confirmation = -1;
                 while(confirmation != 0 && confirmation != 1){
                     try{
@@ -270,14 +280,16 @@ public class Game {
 
                     for(String line : finishLines) {
                         System.out.println(line);
-                        printer.println(line);
+                        sendMsg(printer, line);
                     }
 
                     if(playerDebt >= 102) {
-                        System.out.println(ANSICodes.ANSI_GREEN + "The server's player exceeded the threshold of 101 points. You WIN :D" + ANSICodes.ANSI_RESET);
+                        System.out.println(ANSICodes.ANSI_RED + "You exceeded the threshold of 101 points. You lose :(" + ANSICodes.ANSI_RESET);
+                        sendMsg(printer, ANSICodes.ANSI_GREEN + "The server's player exceeded the threshold of 101 points. You WIN :D" + ANSICodes.ANSI_RESET);
                         System.exit(0);
                     } else if(cpuDebt >= 102){
-                        System.out.println(ANSICodes.ANSI_RED + "You exceeded the threshold of 101 points. You lose :(" + ANSICodes.ANSI_RESET);
+                        System.out.println(ANSICodes.ANSI_GREEN + "The server's player exceeded the threshold of 101 points. You WIN :D" + ANSICodes.ANSI_RESET);
+                        sendMsg(printer, ANSICodes.ANSI_RED + "You exceeded the threshold of 101 points. You lose :(" + ANSICodes.ANSI_RESET);
                         System.exit(0);
                     }
                 }
@@ -287,12 +299,12 @@ public class Game {
 
         if(!discard) return;
 
-        printer.print("\t What card do you wish to discard (Separate suit and number by a space)? ");
+        sendMsg(printer, "\t What card do you wish to discard (Separate suit and number by a space)? \n");
         String suit = String.valueOf(scanner.next().charAt(0));
         int num = scanner.nextInt();
         Card c = new Card(suit, num);
         while(!cpuCards.containsCard(c)){
-            printer.print("Huh? You do not have that card in your hand. Please input a valid card: ");
+            sendMsg(printer, "Huh? You do not have that card in your hand. Please input a valid card: \n");
             suit = String.valueOf(scanner.next().charAt(0));
             num = scanner.nextInt();
             c = new Card(suit, num);
