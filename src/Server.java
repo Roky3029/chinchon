@@ -6,24 +6,13 @@ import java.util.Scanner;
 
 @SuppressWarnings("CallToPrintStackTrace")
 public class Server {
-
-//    public Server(){
-//        System.out.println("Waking up the server...");
-//        connectToServer();
-//        System.out.println("Server up and running");
-//    }
-
-//    public static void sendMessageToClient(String msg){
-//        pw.println(msg);
-//        pw.flush();
-//    }
-
-    public static void connectToServer() {
+    public static void main() {
+        System.out.println("Attempting to  create a server...");
         //Try connect to the server on an unused port eg 9991. A successful connection will return a socket
         try(ServerSocket serverSocket = new ServerSocket(9991)) {
             Socket connectionSocket = serverSocket.accept();
 
-            //Create Input&Outputstreams for the connection
+            //Create Input & Outputstreams for the connection
             InputStream inputToServer = connectionSocket.getInputStream();
             OutputStream outputFromServer = connectionSocket.getOutputStream();
 
@@ -33,7 +22,7 @@ public class Server {
 
             // --------------------------------------------------------------------
             int playerDebt = 0, cpuDebt = 0;
-            Game game = new Game(false, playerDebt, cpuDebt);
+            Game game = new Game(true, playerDebt, cpuDebt);
 
             // After giving cards to each player, we must get the first discard in the discard pile
             game.getFirstDiscard();
@@ -53,18 +42,8 @@ public class Server {
                     game.setKeepPlaying(true);
                 }
             }
-
-            while(game.getKeepPlaying()){
-                game.playerTurn(pw);
-                game.remotePlayerTurn(pw, scanner);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(){
-        System.out.println("Waking up the server...");
-        Server.connectToServer();
     }
 }

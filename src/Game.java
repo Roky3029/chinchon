@@ -1,9 +1,17 @@
+import dataStructures.Card;
+import dataStructures.Hand;
 import dataStructures.LinkedListPOI;
 import dataStructures.ListPOI;
+import utilities.ANSICodes;
+import utilities.Helpers;
 
 import java.io.PrintWriter;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+
+import static utilities.Helpers.sendMsg;
+import static utilities.Helpers.print;
+import static utilities.Helpers.sendBoth;
 
 @SuppressWarnings("UnnecessaryModifier")
 public class Game {
@@ -76,17 +84,7 @@ public class Game {
     public int getPlayerDebt(){ return playerDebt; }
     public int getCpuDebt(){ return cpuDebt; }
     public boolean getKeepPlaying() {return keepPlaying;}
-    public void setKeepPlaying(boolean b){this.keepPlaying = b;}
-
-    private void sendMsg(PrintWriter printer, String msg){
-        printer.print(msg);
-        printer.flush();
-    }
-
-    private void sendMsg(PrintWriter printer, int msg){
-        printer.print(msg);
-        printer.flush();
-    }
+    public void setKeepPlaying(boolean b){keepPlaying = b;}
 
     public void playerTurn(PrintWriter printer){
         ANSICodes.clearTerminal();
@@ -98,15 +96,11 @@ public class Game {
 
         int i = 0;
         for(String line : lines){
-            System.out.println(line);
-            if(i != lines.length - 1 && !line.equals(criticalLine)) {
-                printer.print(line);
-                printer.flush();
-            }
+            print(line);
+            if(i != lines.length - 1 && !line.equals(criticalLine)) sendMsg(printer, line);
             i++;
         }
-        printer.print("\t Your hand: " + cpuCards + "\n");
-        printer.flush();
+        sendMsg(printer, "\t Your hand: " + cpuCards + "\n");
 
         int action;
 
@@ -117,7 +111,7 @@ public class Game {
         }
 
         while(action < 0 || action > 3){
-            System.out.print("Huh? Please input a valid action: ");
+            print("Huh? Please input a valid action: ");
             sc.nextLine();
             try{
                 action = sc.nextInt();
@@ -133,18 +127,19 @@ public class Game {
             case 2:
                 Card randomCard = library.getRandom();
                 playerCards.add(randomCard);
-                System.out.println("\t You've obtained the " + randomCard);
+                print("\t You've obtained the " + randomCard);
                 library.remove(randomCard);
                 break;
             case 3:
                 int deadwood = GameLogic.findBestGrouping(playerCards);
                 if(deadwood > 3){
-                    System.out.println("Sorry, you cannot finish the round. Your actual deadwood is " + deadwood);
+                    print("Sorry, you cannot finish the round. Your actual deadwood is " + deadwood);
                     discard = false;
                     break;
                 }
-                System.out.print("Are you sure you want to finish the round (1 = yes; 0 = no)? Your current deadwood is " + deadwood);
-                System.out.println(deadwood == 0 ? " (-10 point bonus)" : "");
+                print("Are you sure you want to finish the round (1 = yes; 0 = no)? Your current deadwood is " + deadwood);
+                print(deadwood == 0 ? " (-10 point bonus)\n" : "\n");
+
                 int confirmation = -1;
                 while(confirmation != 0 && confirmation != 1){
                     try{
@@ -159,33 +154,36 @@ public class Game {
                     cpuDebt += GameLogic.findBestGrouping(cpuCards);
                     playerDebt += deadwood == 0 ? -10 : deadwood;
 
-                    System.out.println("---------CHINCHON, A TRADITIONAL SPANISH CARD GAME---------");
-                    System.out.println();
-                    System.out.println();
-                    System.out.println("\t SCOREBOARD");
-                    System.out.println("\t Player's points: " + playerDebt);
-                    System.out.println("\t CPU's points: " + cpuDebt);
+                    sendMsg(printer, "Server's player has decided to finish the round...\n");
+                    String[] ls = {"---------CHINCHON, A TRADITIONAL SPANISH CARD GAME---------\n", "\n", "\n", "\t SCOREBOARD\n",
+                            "\t Player's points: " + playerDebt + "\n", "\t Remote player's points: " + cpuDebt + "\n"};
+
+                    for(String l : ls) sendBoth(printer, l);
 
                     if(playerDebt >= 102) {
-                        System.out.println(ANSICodes.ANSI_RED + "You exceeded the threshold of 101 points. You lose :(" + ANSICodes.ANSI_RESET);
+                        print(ANSICodes.ANSI_RED + "You exceeded the threshold of 101 points. You lose :(" + ANSICodes.ANSI_RESET + "\n");
+                        sendMsg(printer, ANSICodes.ANSI_GREEN + "The server's player exceeded the threshold of 101 points. You WIN :D" + ANSICodes.ANSI_RESET);
                         System.exit(0);
                     } else if(cpuDebt >= 102){
-                        System.out.println(ANSICodes.ANSI_GREEN + "The CPU exceeded the threshold of 101 points. You WIN :D" + ANSICodes.ANSI_RESET);
+                        print(ANSICodes.ANSI_GREEN + "The remote player exceeded the threshold of 101 points. You WIN :D" + ANSICodes.ANSI_RESET + "\n");
+                        sendMsg(printer, ANSICodes.ANSI_RED + "You exceeded the threshold of 101 points. You lose :(" + ANSICodes.ANSI_RESET);
                         System.exit(0);
                     }
                 }
-
-                discard = false;
+                return;
         }
 
-        if(!discard) return;
+        if(!discard) {
+            playerTurn(printer);
+            return;
+        }
 
-        System.out.print("\t What card do you wish to discard (Separate suit and number by a space)? ");
+        print("\t What card do you wish to discard (Separate suit and number by a space)? ");
         String suit = String.valueOf(sc.next().charAt(0));
         int num = sc.nextInt();
         Card c = new Card(suit, num);
         while(!playerCards.containsCard(c)){
-            System.out.print("Huh? You do not have that card in your hand. Please input a valid card: ");
+            print("Huh? You do not have that card in your hand. Please input a valid card: ");
             suit = String.valueOf(sc.next().charAt(0));
             num = sc.nextInt();
             c = new Card(suit, num);
@@ -208,24 +206,17 @@ public class Game {
 
         int i = 0;
         for(String line : lines){
-            if(i != lines.length - 1 && !line.equals(criticalLine)) {
-                System.out.println(line);
-            }
+            if(i != lines.length - 1 && !line.equals(criticalLine)) print(line + "\n");
             sendMsg(printer, line);
             i++;
         }
 
-        System.out.print("\t Your hand: " + playerCards + "\n");
-
-//        Card randomCard = library.getRandom();
-
+        print("\t Your hand: " + playerCards + "\n");
         int action;
 
         try{
             action = scanner.nextInt();
-//            System.out.println("THe remote user has selected " + action);
         } catch(InputMismatchException e){
-//            System.out.println("Error reading the input. Please try again");
             action = -1;
         }
 
@@ -278,17 +269,14 @@ public class Game {
                     String[] finishLines = {"---------CHINCHON, A TRADITIONAL SPANISH CARD GAME---------", "", "", "\t SCOREBOARD", "\t Player's points: " + playerDebt,
                             "\t CPU's points: " + cpuDebt};
 
-                    for(String line : finishLines) {
-                        System.out.println(line);
-                        sendMsg(printer, line);
-                    }
+                    for(String line : finishLines) sendBoth(printer, line);
 
                     if(playerDebt >= 102) {
-                        System.out.println(ANSICodes.ANSI_RED + "You exceeded the threshold of 101 points. You lose :(" + ANSICodes.ANSI_RESET);
+                        print(ANSICodes.ANSI_RED + "You exceeded the threshold of 101 points. You lose :(" + ANSICodes.ANSI_RESET + "\n");
                         sendMsg(printer, ANSICodes.ANSI_GREEN + "The server's player exceeded the threshold of 101 points. You WIN :D" + ANSICodes.ANSI_RESET);
                         System.exit(0);
                     } else if(cpuDebt >= 102){
-                        System.out.println(ANSICodes.ANSI_GREEN + "The server's player exceeded the threshold of 101 points. You WIN :D" + ANSICodes.ANSI_RESET);
+                        print(ANSICodes.ANSI_GREEN + "The server's player exceeded the threshold of 101 points. You WIN :D" + ANSICodes.ANSI_RESET + "\n");
                         sendMsg(printer, ANSICodes.ANSI_RED + "You exceeded the threshold of 101 points. You lose :(" + ANSICodes.ANSI_RESET);
                         System.exit(0);
                     }
@@ -297,7 +285,10 @@ public class Game {
                 discard = false;
         }
 
-        if(!discard) return;
+        if(!discard) {
+            remotePlayerTurn(printer, scanner);
+            return;
+        }
 
         sendMsg(printer, "\t What card do you wish to discard (Separate suit and number by a space)? \n");
         String suit = String.valueOf(scanner.next().charAt(0));
@@ -317,38 +308,4 @@ public class Game {
         topDiscard = library.getRandom();
         library.remove();
     }
-//    public static void main() {
-//        int playerDebt = 0, cpuDebt = 0;
-//        Game game = new Game(true, playerDebt, cpuDebt);
-//
-//        // After shuffling and giving cards to each player, we must get the first card to be in the discard pile
-//        topDiscard = library.getRandom();
-//        library.remove(topDiscard);
-//
-//        Scanner in = new Scanner(System.in);
-//        String anotherRound;
-//        boolean playAnotherRound = true;
-//
-////        System.out.println("--------Test-----");
-////        Server sv = new Server();
-////        System.out.println("Sending message to client...");
-////        sv.sendMessageToClient("Hola! Mensaje desde Game.java");
-//
-//        while(playAnotherRound){
-//            playerCards.sortHandBySuit();
-//            cpuCards.sortHandByNumbers();
-//            playerTurn(null);
-//            playerCards.sortHandBySuit();
-//            cpuCards.sortHandByNumbers();
-//            if(keepPlaying) remotePlayerTurn(null);
-//
-//            if(!keepPlaying){
-//                System.out.println("Want to play another round of Chinchon? (Y/n)");
-//                anotherRound = in.nextLine();
-//                playAnotherRound = !anotherRound.equalsIgnoreCase("n");
-//                game = new Game(true, game.getPlayerDebt(), game.getCpuDebt());
-//                keepPlaying = true;
-//            }
-//        }
-//    }
 }

@@ -1,4 +1,10 @@
+package utilities;
+
 import dataStructures.ListPOI;
+import dataStructures.Card;
+import dataStructures.Hand;
+
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,5 +35,24 @@ public class Helpers {
         set.addAll(list2);
 
         return new ArrayList<>(set);
+    }
+
+    public static <T> void sendMsg(PrintWriter printer, T msg){
+        printer.print(msg);
+        printer.flush();
+    }
+
+//    private static void sendMsg(PrintWriter printer, int msg){
+//        printer.print(msg);
+//        printer.flush();
+//    }
+
+    public static void print(String msg){
+        System.out.println(msg);
+    }
+
+    public static void sendBoth(PrintWriter printer, String msg){
+        sendMsg(printer, msg);
+        System.out.println(msg);
     }
 }

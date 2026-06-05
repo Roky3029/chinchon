@@ -1,3 +1,5 @@
+package dataStructures;
+
 import java.util.*;
 
 @SuppressWarnings("CollectionAddedToSelf")

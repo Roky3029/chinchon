@@ -1,3 +1,5 @@
+import dataStructures.Card;
+
 import java.util.Comparator;
 import java.util.List;
 
