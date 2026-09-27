@@ -42,11 +42,6 @@ public class Helpers {
         printer.flush();
     }
 
-//    private static void sendMsg(PrintWriter printer, int msg){
-//        printer.print(msg);
-//        printer.flush();
-//    }
-
     public static void print(String msg){
         System.out.println(msg);
     }

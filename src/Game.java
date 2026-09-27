@@ -47,17 +47,17 @@ public class Game {
             playerCards.add(new Card("C", 4));
             playerCards.add(new Card("C", 2));
             playerCards.add(new Card("C", 3));
-            playerCards.add(new Card("B", 11));
-            playerCards.add(new Card("O", 11));
-            playerCards.add(new Card("E", 11));
+            playerCards.add(new Card("C", 5));
+            playerCards.add(new Card("C", 6));
+            playerCards.add(new Card("C", 7));
 
             library.remove(new Card("C", 1));
             library.remove(new Card("C", 4));
             library.remove(new Card("C", 2));
             library.remove(new Card("C", 3));
-            library.remove(new Card("B", 11));
-            library.remove(new Card("O", 11));
-            library.remove(new Card("E", 11));
+            library.remove(new Card("C", 5));
+            library.remove(new Card("C", 6));
+            library.remove(new Card("C", 7));
 
             cpuCards.add(new Card("E", 1));
             cpuCards.add(new Card("E", 4));
@@ -131,7 +131,7 @@ public class Game {
                 library.remove(randomCard);
                 break;
             case 3:
-                int deadwood = GameLogic.findBestGrouping(playerCards);
+                int deadwood = GameLogic.findBestGrouping(playerCards, true);
                 if(deadwood > 3){
                     print("Sorry, you cannot finish the round. Your actual deadwood is " + deadwood);
                     discard = false;
@@ -151,7 +151,7 @@ public class Game {
 
                 if(confirmation == 1) {
                     keepPlaying = false;
-                    cpuDebt += GameLogic.findBestGrouping(cpuCards);
+                    cpuDebt += GameLogic.findBestGrouping(cpuCards, true);
                     playerDebt += deadwood == 0 ? -10 : deadwood;
 
                     sendMsg(printer, "Server's player has decided to finish the round...\n");
@@ -178,9 +178,12 @@ public class Game {
             return;
         }
 
-        print("\t What card do you wish to discard (Separate suit and number by a space)? ");
-        String suit = String.valueOf(sc.next().charAt(0));
-        int num = sc.nextInt();
+        print("\t What card do you wish to discard? ");
+//        String suit = String.valueOf(sc.next().charAt(0));
+//        int num = sc.nextInt();
+        String input = sc.next();
+        String suit = String.valueOf(input.charAt(0));
+        int num = Integer.parseInt(input.substring(1));
         Card c = new Card(suit, num);
         while(!playerCards.containsCard(c)){
             print("Huh? You do not have that card in your hand. Please input a valid card: ");
@@ -243,7 +246,7 @@ public class Game {
                 library.remove(randomCard);
                 break;
             case 3:
-                int deadwood = GameLogic.findBestGrouping(cpuCards);
+                int deadwood = GameLogic.findBestGrouping(cpuCards, true);
                 if(deadwood > 3){
                     sendMsg(printer, "Sorry, you cannot finish the round. Your actual deadwood is " + deadwood + "\n");
                     discard = false;
@@ -263,7 +266,7 @@ public class Game {
 
                 if(confirmation == 1) {
                     keepPlaying = false;
-                    playerDebt += GameLogic.findBestGrouping(playerCards);
+                    playerDebt += GameLogic.findBestGrouping(playerCards, true);
                     cpuDebt += deadwood == 0 ? -10 : deadwood;
 
                     String[] finishLines = {"---------CHINCHON, A TRADITIONAL SPANISH CARD GAME---------", "", "", "\t SCOREBOARD", "\t Player's points: " + playerDebt,
@@ -290,9 +293,10 @@ public class Game {
             return;
         }
 
-        sendMsg(printer, "\t What card do you wish to discard (Separate suit and number by a space)? \n");
-        String suit = String.valueOf(scanner.next().charAt(0));
-        int num = scanner.nextInt();
+        sendMsg(printer, "\t What card do you wish to discard? \n");
+        String input = sc.next();
+        String suit = String.valueOf(input.charAt(0));
+        int num = Integer.parseInt(input.substring(1));
         Card c = new Card(suit, num);
         while(!cpuCards.containsCard(c)){
             sendMsg(printer, "Huh? You do not have that card in your hand. Please input a valid card: \n");
