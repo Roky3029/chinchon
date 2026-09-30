@@ -21,8 +21,6 @@ public class GameLogic {
 
             if(isChinchon && searchForChinchon){
                 if(lastCard == null) lastCard = c;
-//                else if(lastCard.getNumericalSuit() != c.getNumericalSuit()
-//                        || (lastCard.getValue() == c.getValue() - 1 || (c.getValue() == 10 && lastCard.getValue() != 7))) {
                 else if (lastCard.getNumericalSuit() != c.getNumericalSuit()
                         || (lastCard.getValue() != c.getValue() - 1
                         && (c.getValue() != 10 || lastCard.getValue() != 7))){
@@ -54,7 +52,7 @@ public class GameLogic {
 
     public static void main(){
         Hand curr = new Hand();
-        curr.add(new Card("O", 2));
+        curr.add(new Card("O", 4));
         curr.add(new Card("O", 5));
         curr.add(new Card("O", 6));
         curr.add(new Card("O", 7));

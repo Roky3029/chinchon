@@ -9,9 +9,4 @@ public class ANSICodes {
 //    public static final String ANSI_PURPLE = "\u001B[35m";
 //    public static final String ANSI_CYAN   = "\u001B[36m";
 //    public static final String ANSI_WHITE  = "\u001B[37m";
-
-    public static void clearTerminal() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-    }
 }

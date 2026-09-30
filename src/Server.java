@@ -2,10 +2,8 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-@SuppressWarnings("CallToPrintStackTrace")
 public class Server {
     public static void main() {
         System.out.println("Attempting to  create a server...");
@@ -32,9 +30,14 @@ public class Server {
             boolean playAnotherRound = true;
 
             while(playAnotherRound){
+                GameFlow.clearTerminal(null);
                 game.playerTurn(pw);
-                if(game.getKeepPlaying()) game.remotePlayerTurn(pw, scanner);
+                if(game.getKeepPlaying()) {
+                    GameFlow.clearTerminal(pw);
+                    game.remotePlayerTurn(pw, scanner);
+                }
 
+                System.out.println(game.getKeepPlaying());
                 if(!game.getKeepPlaying()){
                     String line = "Want to play another round of Chinchon? (Y/n)";
                     System.out.println(line);
