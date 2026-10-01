@@ -1,21 +1,16 @@
 package utilities;
 
 public class GameData {
-    private boolean discard, keepPlaying;
+    private boolean keepPlaying;
     private int playerDebt, cpuDebt;
 
-    public GameData(boolean d, boolean kp, int pd, int cd){
-        this.discard = d;
+    public GameData(boolean kp, int pd, int cd){
         this.keepPlaying = kp;
         this.playerDebt = pd;
         this.cpuDebt = cd;
     }
 
     /////////////////////// SETTERS ///////////////////////
-
-    public void setDiscard(boolean d){
-        this.discard = d;
-    }
 
     public void setKeepPlaying(boolean kp){
         this.keepPlaying = kp;
@@ -30,10 +25,6 @@ public class GameData {
     }
 
     /////////////////////// GETTERS ///////////////////////
-
-    public boolean getDiscard(){
-        return this.discard;
-    }
 
     public boolean getKeepPlaying(){
         return this.keepPlaying;

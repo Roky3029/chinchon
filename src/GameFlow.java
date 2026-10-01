@@ -21,6 +21,30 @@ public class GameFlow {
         }
     }
 
+    public static void printGameHeader(Card topDiscard, Hand userCards, Hand remoteCards, PrintWriter printer, boolean isRemotePlayer){
+        String[] lines = {"---------CHINCHON, A TRADITIONAL SPANISH CARD GAME---------\n", "\n", "\n", "\n",
+                "\t Top of discard pile: " + topDiscard + "\n", "\t Your hand: " + userCards + "\n",
+                "\t Do you wish to get the discarded card (1), take one from the library (2) or finish the round (3)? \n"};
+        String criticalLine = "\t Your hand: " + userCards + "\n";
+
+        int i = 0;
+        for(String line : lines){
+            boolean b = i != lines.length - 1 && !line.equals(criticalLine);
+            if(!isRemotePlayer){
+                print(line);
+                if(b) sendMsg(printer, line);
+            } else {
+                if(b) print(line + "\n");
+                sendMsg(printer, line);
+            }
+            
+            i++;
+        }
+
+        if(!isRemotePlayer) sendMsg(printer, "\t Your hand: " + remoteCards + "\n");
+        else print("\t Your hand: " + remoteCards + "\n");
+    }
+
     public static void getFromDiscardPile(Hand cards, Card topDiscard){
         cards.add(topDiscard);
     }
@@ -38,22 +62,18 @@ public class GameFlow {
     public static void finishRound(PrintWriter printer, boolean isHostPlayer, Hand playerCards, Hand cpuCards, GameData gd, Scanner sc){
         int deadwood = GameLogic.findBestGrouping(playerCards, true);
 
-        if (deadwood > 3) {
-            if(isHostPlayer) print("Sorry, you cannot finish the round. Your actual deadwood is " + deadwood);
-            else sendMsg(printer, "Sorry, you cannot finish the round. Your actual deadwood is " + deadwood + "\n");
-
-            gd.setDiscard(false);
-        } else {
+        if (deadwood <= 3) {
+            String[] text = {"You could finish the round right now, do you want to do so? (1 = yes; 0 = no)? ", "\" (-10 point bonus)\\n\""};
             String currentDeadwood = deadwood == -30
                     ? ANSICodes.ANSI_YELLOW + "KEEP IN MIND: You have Chinchon, which automatically wins the whole game" + ANSICodes.ANSI_RESET
                     : "Your current deadwood is " + deadwood;
 
             if(isHostPlayer){
-                print("Are you sure you want to finish the round (1 = yes; 0 = no)? " + currentDeadwood);
-                print(deadwood == 0 ? " (-10 point bonus)\n" : "\n");
+                print(text[0] + currentDeadwood);
+                print(deadwood == 0 ? text[1] : "\n");
             } else {
-                sendMsg(printer, "Are you sure you want to finish the round (1 = yes; 0 = no)? " + currentDeadwood);
-                sendMsg(printer, deadwood == 0 ? " (-10 point bonus)\n" : "\n");
+                sendMsg(printer, text[0] + currentDeadwood);
+                sendMsg(printer, deadwood == 0 ? text[1] : "\n");
             }
 
             int confirmation = -1;
@@ -67,7 +87,6 @@ public class GameFlow {
 
             if (confirmation == 1) {
                 gd.setKeepPlaying(false);
-                gd.setDiscard(false);
                 gd.setCpuDebt(gd.getCpuDebt() + GameLogic.findBestGrouping(cpuCards, true));
                 gd.setPlayerDebt(gd.getPlayerDebt() + (deadwood == 0 ? -10 : deadwood));
 
@@ -75,12 +94,10 @@ public class GameFlow {
                 else print("The other player has decided to finish the round...\n");
 
                 if(deadwood == -30){
-                    if(printer == null){
+                    if(isHostPlayer){
                         // Chinchon for the host player
                         sendBoth(printer, ANSICodes.ANSI_BLUE + "Host player wins by CHINCHON with " + ANSICodes.ANSI_RESET + playerCards);
-                    } else if(printer != null){
-                        sendBoth(printer, ANSICodes.ANSI_BLUE + "Remote player wins by CHINCHON with " + ANSICodes.ANSI_RESET + playerCards);
-                    }
+                    } else sendBoth(printer, ANSICodes.ANSI_BLUE + "Remote player wins by CHINCHON with " + ANSICodes.ANSI_RESET + playerCards);
 
                     System.exit(0);
                 }
@@ -113,10 +130,7 @@ public class GameFlow {
                         System.exit(0);
                     }
                 }
-            } else {
-                gd.setDiscard(false);
             }
-            if(!isHostPlayer) gd.setDiscard(false);
         }
     }
 }
