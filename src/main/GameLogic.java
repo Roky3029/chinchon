@@ -1,3 +1,5 @@
+package main;
+
 import dataStructures.Card;
 import dataStructures.Hand;
 import utilities.Helpers;
@@ -6,6 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameLogic {
+    public static List<Card> removeEach(List<Card> cards, List<Card> toRemove){
+        List<Card> result = new ArrayList<>(cards);
+        for(Card c : toRemove) result.remove(c);
+        return result;
+    }
+
     // This method will get all the possible runs and sets given a dataStructures.Hand and compute the most appropiate way to distribute the groups so that the deadwood is minimizedz
     public static int findBestGrouping(Hand cards, boolean searchForChinchon){
         if(cards.getHand().isEmpty()) return 0;
@@ -34,8 +42,11 @@ public class GameLogic {
         List<List<Card>> allCombinations = Helpers.union(cards.getRuns(), cards.getSets());
 
         for(List<Card> comb : allCombinations){
-            List<Card> newHand = new ArrayList<>(currentHand);
-            newHand.removeAll(comb);
+//            List<Card> newHand = new ArrayList<>(currentHand);
+//            newHand.removeAll(comb);
+//            int score = findBestGrouping(new Hand(newHand), false);
+//            best = Math.min(best, score);
+            List<Card> newHand = removeEach(currentHand, comb);
             int score = findBestGrouping(new Hand(newHand), false);
             best = Math.min(best, score);
         }

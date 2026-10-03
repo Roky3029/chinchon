@@ -1,12 +1,18 @@
+package main;
+
 import dataStructures.Card;
 import dataStructures.Hand;
 import dataStructures.ListPOI;
+import postClosing.Operations;
+import postClosing.RoundResult;
 import utilities.ANSICodes;
 import utilities.GameData;
 
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 import static utilities.Helpers.*;
@@ -63,7 +69,7 @@ public class GameFlow {
         int deadwood = GameLogic.findBestGrouping(playerCards, true);
 
         if (deadwood <= 3) {
-            String[] text = {"You could finish the round right now, do you want to do so? (1 = yes; 0 = no)? ", "\" (-10 point bonus)\\n\""};
+            String[] text = {"You could finish the round right now, do you want to do so? (1 = yes; 0 = no)? ", " (-10 point bonus)\n"};
             String currentDeadwood = deadwood == -30
                     ? ANSICodes.ANSI_YELLOW + "KEEP IN MIND: You have Chinchon, which automatically wins the whole game" + ANSICodes.ANSI_RESET
                     : "Your current deadwood is " + deadwood;
@@ -87,8 +93,15 @@ public class GameFlow {
 
             if (confirmation == 1) {
                 gd.setKeepPlaying(false);
-                gd.setCpuDebt(gd.getCpuDebt() + GameLogic.findBestGrouping(cpuCards, true));
-                gd.setPlayerDebt(gd.getPlayerDebt() + (deadwood == 0 ? -10 : deadwood));
+
+                List<Hand> hands = new ArrayList<>();
+                hands.add(playerCards); hands.add(cpuCards);
+                RoundResult r = Operations.resolveRound(hands, 0);
+
+//                gd.setCpuDebt(gd.getCpuDebt() + GameLogic.findBestGrouping(cpuCards, true));
+//                gd.setPlayerDebt(gd.getPlayerDebt() + (deadwood == 0 ? -10 : deadwood));
+                gd.setCpuDebt(gd.getCpuDebt() + r.points[1]);
+                gd.setPlayerDebt(gd.getPlayerDebt() + deadwood == 0 ? -10 : r.points[0]);
 
                 if(isHostPlayer) sendMsg(printer, "Host player has decided to finish the round...\n");
                 else print("The other player has decided to finish the round...\n");

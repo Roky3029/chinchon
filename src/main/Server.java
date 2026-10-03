@@ -1,3 +1,5 @@
+package main;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -37,7 +39,7 @@ public class Server {
                     game.remotePlayerTurn(pw, scanner);
                 }
 
-                System.out.println(game.getKeepPlaying());
+//                System.out.println(game.getKeepPlaying());
                 if(!game.getKeepPlaying()){
                     String line = "Want to play another round of Chinchon? (Y/n)";
                     System.out.println(line);

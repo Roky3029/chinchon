@@ -1,8 +1,9 @@
+package main;
+
 import dataStructures.Card;
 import dataStructures.Hand;
 import dataStructures.LinkedListPOI;
 import dataStructures.ListPOI;
-import utilities.ANSICodes;
 import utilities.GameData;
 import utilities.Helpers;
 
@@ -12,7 +13,6 @@ import java.util.Scanner;
 
 import static utilities.Helpers.sendMsg;
 import static utilities.Helpers.print;
-import static utilities.Helpers.sendBoth;
 
 @SuppressWarnings("UnnecessaryModifier")
 public class Game {
@@ -41,10 +41,10 @@ public class Game {
         }
 
         if(debug){
-            playerCards.add(new Card("C", 1));
-            playerCards.add(new Card("C", 2));
-            playerCards.add(new Card("C", 3));
-            playerCards.add(new Card("C", 4));
+            playerCards.add(new Card("O", 1));
+            playerCards.add(new Card("O", 2));
+            playerCards.add(new Card("O", 3));
+            playerCards.add(new Card("O", 4));
             playerCards.add(new Card("C", 5));
             playerCards.add(new Card("C", 6));
             playerCards.add(new Card("C", 7));
@@ -63,15 +63,15 @@ public class Game {
             cpuCards.add(new Card("E", 3));
             cpuCards.add(new Card("B", 10));
             cpuCards.add(new Card("O", 11));
-            cpuCards.add(new Card("E", 7));
+            cpuCards.add(new Card("C", 10));
 
-            library.remove(new Card("C", 1));
-            library.remove(new Card("C", 4));
-            library.remove(new Card("C", 2));
-            library.remove(new Card("C", 3));
-            library.remove(new Card("B", 11));
+            library.remove(new Card("E", 1));
+            library.remove(new Card("E", 4));
+            library.remove(new Card("E", 2));
+            library.remove(new Card("E", 3));
+            library.remove(new Card("B", 10));
             library.remove(new Card("O", 11));
-            library.remove(new Card("E", 11));
+            library.remove(new Card("C", 10));
 
         } else {
             Helpers.dealCards(playerCards, possibleNums, possibleSuits, library);
