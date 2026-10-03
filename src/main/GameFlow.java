@@ -98,10 +98,15 @@ public class GameFlow {
                 hands.add(playerCards); hands.add(cpuCards);
                 RoundResult r = Operations.resolveRound(hands, 0);
 
-//                gd.setCpuDebt(gd.getCpuDebt() + GameLogic.findBestGrouping(cpuCards, true));
-//                gd.setPlayerDebt(gd.getPlayerDebt() + (deadwood == 0 ? -10 : deadwood));
-                gd.setCpuDebt(gd.getCpuDebt() + r.points[1]);
-                gd.setPlayerDebt(gd.getPlayerDebt() + deadwood == 0 ? -10 : r.points[0]);
+                // If the player closes with -10, you cannot add cards to the final groups, therefore any card's value you don't have grouped is added to your count
+                if(deadwood == 0) {
+                    // The player closes with -10
+                    gd.setCpuDebt(gd.getCpuDebt() + GameLogic.findBestGrouping(cpuCards, true));
+                    gd.setPlayerDebt(gd.getPlayerDebt() + (deadwood == 0 ? -10 : deadwood));
+                } else {
+                    gd.setCpuDebt(gd.getCpuDebt() + r.points[1]);
+                    gd.setPlayerDebt(gd.getPlayerDebt() + deadwood == 0 ? -10 : r.points[0]);
+                }
 
                 if(isHostPlayer) sendMsg(printer, "Host player has decided to finish the round...\n");
                 else print("The other player has decided to finish the round...\n");
