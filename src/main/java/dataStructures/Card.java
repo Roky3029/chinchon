@@ -2,7 +2,9 @@ package dataStructures;
 
 import utilities.ANSICodes;
 
-public class Card {
+import java.io.Serializable;
+
+public class Card implements Serializable {
     private final String suit;
     private final int value;
     private final int numericalSuit;

@@ -1,6 +1,8 @@
 package utilities;
 
-public class GameData {
+import java.io.Serializable;
+
+public class GameData implements Serializable {
     private boolean keepPlaying;
     private int playerDebt, cpuDebt;
 

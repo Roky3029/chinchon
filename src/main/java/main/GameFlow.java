@@ -30,7 +30,7 @@ public class GameFlow {
     public static void printGameHeader(Card topDiscard, Hand userCards, Hand remoteCards, PrintWriter printer, boolean isRemotePlayer){
         String[] lines = {"---------CHINCHON, A TRADITIONAL SPANISH CARD GAME---------\n", "\n", "\n", "\n",
                 "\t Top of discard pile: " + topDiscard + "\n", "\t Your hand: " + userCards + "\n",
-                "\t Do you wish to get the discarded card (1), take one from the library (2) or finish the round (3)? \n"};
+                "\t Do you wish to get the discarded card (1) or take one from the library (2)? \n"};
         String criticalLine = "\t Your hand: " + userCards + "\n";
 
         int i = 0;

@@ -28,4 +28,16 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-src/TODO
+src/main/java/TODO
+/src/main/java/TODO
+# Maven build output
+target/
+
+# IntelliJ
+.idea/*
+*.iml
+
+# Misc
+*.class
+out/
+.DS_Store

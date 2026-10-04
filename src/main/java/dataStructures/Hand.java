@@ -1,9 +1,10 @@
 package dataStructures;
 
+import java.io.Serializable;
 import java.util.*;
 
 @SuppressWarnings("CollectionAddedToSelf")
-public class Hand {
+public class Hand implements Serializable {
     private final List<Card> hand;
     public static final int STARTING_CARDS = 7;
 

@@ -8,6 +8,7 @@ import utilities.GameData;
 import utilities.Helpers;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -15,7 +16,7 @@ import static utilities.Helpers.sendMsg;
 import static utilities.Helpers.print;
 
 @SuppressWarnings("UnnecessaryModifier")
-public class Game {
+public class Game implements Serializable {
     public static final int[] possibleNums = {1, 2, 3, 4, 5, 6, 7, 10, 11, 12};
     public static final String[] possibleSuits = {"B", "C", "O", "E"}; // Bastos, Copas, Oros, Espadas in the Spanish deck
     private static ListPOI<Card> library;
@@ -23,6 +24,7 @@ public class Game {
     private static Card topDiscard;
     private static Scanner sc;
     private static GameData gd;
+    private static boolean hostTurn;
 
     public Game(boolean debug, int pD, int cD){
         sc = new Scanner(System.in);
@@ -30,6 +32,7 @@ public class Game {
         cpuCards = new Hand();
         library = new LinkedListPOI<>();
         gd = new GameData(true, pD, cD);
+        hostTurn = true;
 
         for(int n : possibleNums) {
             for (String s : possibleSuits) {
@@ -83,6 +86,8 @@ public class Game {
     public int getCpuDebt(){ return gd.getCpuDebt(); }
     public boolean getKeepPlaying() {return gd.getKeepPlaying();}
     public void setKeepPlaying(boolean b){gd.setKeepPlaying(b);}
+    public boolean isHostTurn(){return hostTurn;}
+    public void setHostTurn(boolean h){hostTurn = h;}
 
     private int getAction(Scanner scanner, PrintWriter printer){
         int action;
@@ -141,6 +146,7 @@ public class Game {
         playerCards.remove(c);
 
         GameFlow.finishRound(printer, true, playerCards, cpuCards, gd, sc);
+        hostTurn = false;
     }
 
     public void remotePlayerTurn(PrintWriter printer, Scanner scanner){
@@ -169,6 +175,7 @@ public class Game {
         cpuCards.remove(c);
         
         GameFlow.finishRound(printer, false, cpuCards, playerCards, gd, scanner);
+        hostTurn = true;
     }
 
     public void getFirstDiscard(){
