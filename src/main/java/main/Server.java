@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class Server {
+public class Server implements Serializable {
     public static void main(String[] args) {
         System.out.println("Attempting to  create a server...");
         System.out.println("Player 2, connect via the command 'nc <host ip> 9991'");
@@ -62,6 +62,7 @@ public class Server {
                     System.out.println("Want to play another round of Chinchon? (Y/n)");
                     playAnotherRound = !sc.nextLine().equalsIgnoreCase("n");
                     game = new Game(true, game.getPlayerDebt(), game.getCpuDebt());
+                    game.getFirstDiscard();
                     game.setKeepPlaying(true);
                     if(playAnotherRound) SaveFile.save(game);
                     else SaveFile.deleteSave();

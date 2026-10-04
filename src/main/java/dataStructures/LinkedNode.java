@@ -1,6 +1,8 @@
 package dataStructures;
 
-public class LinkedNode<E> {
+import java.io.Serializable;
+
+public class LinkedNode<E> implements Serializable {
     public E data;
     public LinkedNode<E> next;
 

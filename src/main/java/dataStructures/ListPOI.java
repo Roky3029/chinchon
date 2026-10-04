@@ -1,6 +1,8 @@
 package dataStructures;
 
-public interface ListPOI<E> {
+import java.io.Serializable;
+
+public interface ListPOI<E> extends Serializable {
 
     /** Adds element e just before the POI, without moving it.
      */

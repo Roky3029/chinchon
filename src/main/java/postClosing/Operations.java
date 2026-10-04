@@ -3,6 +3,7 @@ package postClosing;
 import dataStructures.Card;
 import dataStructures.Hand;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 import main.GameLogic;
 import utilities.Helpers;
 
-public class Operations {
+public class Operations implements Serializable {
     private static final int LAYOFF_PASSES = 3;
 
     private static int rank(Card c) {

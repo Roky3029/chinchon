@@ -17,10 +17,6 @@ public class Hand implements Serializable {
         hand.add(c);
     }
 
-    public Card getRandom(){
-        return hand.get((int) (Math.random() * hand.size() - 1));
-    }
-
     public void remove(Card c){
         hand.remove(c);
     }

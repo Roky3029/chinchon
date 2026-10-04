@@ -17,14 +17,14 @@ import static utilities.Helpers.print;
 
 @SuppressWarnings("UnnecessaryModifier")
 public class Game implements Serializable {
-    public static final int[] possibleNums = {1, 2, 3, 4, 5, 6, 7, 10, 11, 12};
-    public static final String[] possibleSuits = {"B", "C", "O", "E"}; // Bastos, Copas, Oros, Espadas in the Spanish deck
-    private static ListPOI<Card> library;
-    private static Hand playerCards, cpuCards;
-    private static Card topDiscard;
-    private static Scanner sc;
-    private static GameData gd;
-    private static boolean hostTurn;
+    public final int[] possibleNums = {1, 2, 3, 4, 5, 6, 7, 10, 11, 12};
+    public final String[] possibleSuits = {"B", "C", "O", "E"}; // Bastos, Copas, Oros, Espadas in the Spanish deck
+    private ListPOI<Card> library;
+    private Hand playerCards, cpuCards;
+    private Card topDiscard;
+    private transient Scanner sc;
+    private GameData gd;
+    private boolean hostTurn;
 
     public Game(boolean debug, int pD, int cD){
         sc = new Scanner(System.in);
@@ -120,6 +120,7 @@ public class Game implements Serializable {
     }
 
     public void playerTurn(PrintWriter printer){
+        if(sc == null) sc = new Scanner(System.in);
         GameFlow.clearTerminal(null);
 
         GameFlow.printGameHeader(topDiscard, playerCards, cpuCards, printer, false);

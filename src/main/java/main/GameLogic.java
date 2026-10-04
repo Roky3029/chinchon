@@ -4,10 +4,11 @@ import dataStructures.Card;
 import dataStructures.Hand;
 import utilities.Helpers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameLogic {
+public class GameLogic implements Serializable {
     public static List<Card> removeEach(List<Card> cards, List<Card> toRemove){
         List<Card> result = new ArrayList<>(cards);
         for(Card c : toRemove) result.remove(c);

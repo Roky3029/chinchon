@@ -5,12 +5,13 @@ import dataStructures.Card;
 import dataStructures.Hand;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.ArrayList;
 
-public class Helpers {
+public class Helpers implements Serializable {
     public static void dealCards(Hand cards, int[] nums, String[] suits, ListPOI<Card> library){
         for(int i = 0; i < Hand.STARTING_CARDS; i++){
             int randomNum = nums[(int) (Math.random() * nums.length)];

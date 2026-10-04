@@ -2,7 +2,9 @@ package postClosing;
 
 import dataStructures.Card;
 
-public final class Placement {
+import java.io.Serializable;
+
+public final class Placement implements Serializable {
     public final int player;     // index in `hands` of the player laying the card off
     public final Card card;
     public final int groupIndex; // index in RoundResult.table

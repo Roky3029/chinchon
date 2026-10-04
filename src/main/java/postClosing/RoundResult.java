@@ -2,9 +2,10 @@ package postClosing;
 
 import dataStructures.Card;
 
+import java.io.Serializable;
 import java.util.List;
 
-public final class RoundResult {
+public final class RoundResult implements Serializable {
     public final int[] points;               // what each player adds upon ending the totality of the round
     public final List<List<Card>> table;     // final groups, including the added cards
     public final List<Integer> groupOwner;   // the index of the user who finished the round (0 == owner, 1 == remote)

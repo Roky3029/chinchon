@@ -10,6 +10,7 @@ import utilities.GameData;
 
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.Scanner;
 
 import static utilities.Helpers.*;
 
-public class GameFlow {
+public class GameFlow implements Serializable {
     public static void clearTerminal(PrintWriter printer){
         if(printer == null){
             System.out.print("\033[H\033[2J");
