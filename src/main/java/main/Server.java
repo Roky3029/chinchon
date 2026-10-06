@@ -28,7 +28,7 @@ public class Server implements Serializable {
             Game game = SaveFile.loadSavedGame(sc);
 
             if(game == null){
-                game = new Game(true, 0, 0);
+                game = new Game(false, 0, 0);
                 game.getFirstDiscard();
             }
             SaveFile.save(game);
@@ -61,7 +61,7 @@ public class Server implements Serializable {
                 } else {
                     System.out.println("Want to play another round of Chinchon? (Y/n)");
                     playAnotherRound = !sc.nextLine().equalsIgnoreCase("n");
-                    game = new Game(true, game.getPlayerDebt(), game.getCpuDebt());
+                    game = new Game(false, game.getPlayerDebt(), game.getCpuDebt());
                     game.getFirstDiscard();
                     game.setKeepPlaying(true);
                     if(playAnotherRound) SaveFile.save(game);
